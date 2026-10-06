@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>编码批次</h2>
+  {% if batches %}
+  <table>
+    <tr><th>ID</th><th>名称</th><th>样品数</th><th>状态</th><th>随机种子</th><th>创建人</th><th>创建时间</th><th>操作</th></tr>
+    {% for b in batches %}
+    <tr>
+      <td>{{ b.id }}</td>
+      <td>{{ b.name }}</td>
+      <td>{{ b.sample_count }}</td>
+      <td><span class="tag {{ b.status }}">{{ '已揭盲' if b.status == 'unblinded' else '已编码' }}</span></td>
+      <td>{{ b.seed }}</td>
+      <td>{{ b.created_by }}</td>
+      <td>{{ b.created_at }}</td>
+      <td>
+        <a href="{{ url_for('main.batch_detail', batch_id=b.id) }}">详情</a>
+        {% if g.user.role == 'viewer' %} · <a href="{{ url_for('main.mapping', batch_id=b.id) }}">映射</a>{% endif %}
+        {% if b.status == 'generated' %} · <a href="{{ url_for('main.unblind', batch_id=b.id) }}">揭盲</a>{% endif %}
+        · <a href="{{ url_for('main.unblinding_events', batch_id=b.id) }}">揭盲记录</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="muted">暂无批次。{% if g.user.role == 'manager' %}<a href="{{ url_for('main.new_batch') }}">新建编码批次</a>{% endif %}</p>
+  {% endif %}
+</div>
+{% endblock %}

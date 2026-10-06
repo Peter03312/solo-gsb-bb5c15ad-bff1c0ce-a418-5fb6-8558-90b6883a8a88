@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}盲法编码管理系统{% endblock %}</title>
+  <style>
+    :root { --primary:#1f6feb; --border:#d0d7de; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; margin:0; background:#f6f8fa; color:#1f2328; }
+    header { background:#0d1117; color:#fff; padding:12px 24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+    header a { color:#9fd0ff; text-decoration:none; }
+    header .brand { font-weight:700; color:#fff; font-size:18px; }
+    header .spacer { flex:1; }
+    main { max-width:1000px; margin:24px auto; padding:0 16px; }
+    .card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:20px; }
+    table { border-collapse:collapse; width:100%; margin:8px 0; }
+    th, td { border:1px solid var(--border); padding:8px 10px; text-align:left; font-size:14px; }
+    th { background:#f0f3f6; }
+    .btn { display:inline-block; background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; text-decoration:none; font-size:14px; }
+    .btn.secondary { background:#57606a; }
+    .btn.danger { background:#cf222e; }
+    .flash { padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px; }
+    .flash.error { background:#ffebe9; border:1px solid #ff818266; color:#a40e26; }
+    .flash.success { background:#dafbe1; border:1px solid #4ac26b66; color:#116329; }
+    label { display:block; margin:12px 0 4px; font-weight:600; font-size:14px; }
+    input[type=text], input[type=password], input[type=number], textarea { width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:14px; }
+    textarea { min-height:90px; }
+    .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:12px; }
+    .tag.generated { background:#ddf4ff; color:#0550ae; }
+    .tag.unblinded { background:#ffebe9; color:#a40e26; }
+    .muted { color:#57606a; font-size:13px; }
+    .warn { background:#fff8c5; border:1px solid #d4a72c66; padding:10px 14px; border-radius:6px; font-size:14px; margin-bottom:12px; }
+    h2 { margin-top:0; }
+  </style>
+</head>
+<body>
+<header>
+  <a class="brand" href="{{ url_for('main.index') }}">盲法编码管理系统</a>
+  {% if g.user %}
+    <a href="{{ url_for('main.index') }}">批次列表</a>
+    {% if g.user.role == 'manager' %}<a href="{{ url_for('main.new_batch') }}">新建编码批次</a>{% endif %}
+    <span class="spacer"></span>
+    <span>{{ g.user.username }}（{{ '负责人' if g.user.role == 'manager' else '授权查看' }}）</span>
+    <a href="{{ url_for('auth.logout') }}">退出</a>
+  {% endif %}
+</header>
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}新建编码批次{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>新建编码批次</h2>
+  <form method="post">
+    <label>批次名称</label>
+    <input type="text" name="name" required>
+
+    <label>随机种子（留空使用系统默认固定种子 {{ default_seed }}）</label>
+    <input type="text" name="seed" placeholder="{{ default_seed }}">
+
+    <label>处理组（用逗号分隔，至少 2 个，如：试验组, 对照组）</label>
+    <input type="text" name="groups" placeholder="试验组, 对照组" required>
+
+    <label>分层因素组合与每层样品数量</label>
+    <table id="strata-table">
+      <tr><th>分层因素组合（如：男 / ≤40岁）</th><th style="width:160px;">样品数量</th><th style="width:80px;"></th></tr>
+      <tr>
+        <td><input type="text" name="stratum_label"></td>
+        <td><input type="number" name="stratum_count" min="0"></td>
+        <td><button type="button" class="btn secondary" onclick="removeRow(this)">删除</button></td>
+      </tr>
+    </table>
+    <p><button type="button" class="btn secondary" onclick="addRow()">添加分层</button></p>
+
+    <p class="muted">
+      规则：每层数量必须大于 0 且为处理组数的整数倍；缺少样品或数量不平衡将拒绝生成。
+      样品码一经发放不可复用，若与已发放编码冲突将拒绝整批并列出冲突。
+    </p>
+    <button class="btn" type="submit">生成样品码</button>
+  </form>
+</div>
+<script>
+function addRow() {
+  const table = document.getElementById('strata-table');
+  const row = table.insertRow();
+  row.innerHTML = '<td><input type="text" name="stratum_label"></td>' +
+    '<td><input type="number" name="stratum_count" min="0"></td>' +
+    '<td><button type="button" class="btn secondary" onclick="removeRow(this)">删除</button></td>';
+}
+function removeRow(btn) {
+  const table = document.getElementById('strata-table');
+  if (table.rows.length > 2) btn.closest('tr').remove();
+}
+</script>
+{% endblock %}

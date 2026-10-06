@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}编码映射 #{{ batch.id }}{% endblock %}
+{% block content %}
+<div class="warn">本页为授权信息：样品码与处理组的映射关系，仅限授权人员查看，请勿外泄。</div>
+<div class="card">
+  <h2>批次 #{{ batch.id }}：{{ batch.name }} — 编码映射</h2>
+  <p>
+    状态：<span class="tag {{ batch.status }}">{{ '已揭盲' if batch.status == 'unblinded' else '已编码' }}</span>
+    &nbsp;<a href="{{ url_for('main.batch_detail', batch_id=batch.id) }}">返回详情</a>
+  </p>
+  <table>
+    <tr><th>样品码</th><th>所属分层</th><th>处理组</th></tr>
+    {% for r in rows %}
+    <tr><td><code>{{ r.code }}</code></td><td>{{ r.stratum }}</td><td><strong>{{ r.group_name }}</strong></td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

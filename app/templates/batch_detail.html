@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}批次详情 #{{ batch.id }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>批次 #{{ batch.id }}：{{ batch.name }}</h2>
+  <p>
+    状态：<span class="tag {{ batch.status }}">{{ '已揭盲' if batch.status == 'unblinded' else '已编码' }}</span>
+    &nbsp;随机种子：{{ batch.seed }}
+    &nbsp;创建人：{{ batch.created_by }}
+    &nbsp;创建时间：{{ batch.created_at }}
+    {% if batch.unblinded_at %}&nbsp;揭盲时间：{{ batch.unblinded_at }}{% endif %}
+  </p>
+  <p>
+    处理组：<strong>{{ groups | map(attribute='name') | join('、') }}</strong>
+    <span class="muted">（组别分配信息仅授权角色可见）</span>
+  </p>
+  <p>
+    {% if g.user.role == 'viewer' %}<a class="btn secondary" href="{{ url_for('main.mapping', batch_id=batch.id) }}">查看映射（授权）</a>{% endif %}
+    {% if batch.status == 'generated' %}<a class="btn danger" href="{{ url_for('main.unblind', batch_id=batch.id) }}">揭盲</a>{% endif %}
+    <a class="btn secondary" href="{{ url_for('main.unblinding_events', batch_id=batch.id) }}">揭盲记录</a>
+  </p>
+</div>
+
+<div class="card">
+  <h2>分层方案</h2>
+  <table>
+    <tr><th>分层因素组合</th><th>样品数量</th></tr>
+    {% for s in strata %}<tr><td>{{ s.label }}</td><td>{{ s.expected_count }}</td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="card">
+  <h2>样品码（盲态，共 {{ samples | length }} 个）</h2>
+  <table>
+    <tr><th>样品码</th><th>所属分层</th></tr>
+    {% for s in samples %}<tr><td><code>{{ s.code }}</code></td><td>{{ s.stratum }}</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}揭盲 #{{ batch.id }}{% endblock %}
+{% block content %}
+<div class="warn">揭盲为不可逆操作。须由两位不同操作者共同确认，并填写完整理由；成功后将记录时间、操作者与映射快照。</div>
+<div class="card">
+  <h2>批次 #{{ batch.id }}：{{ batch.name }} — 揭盲</h2>
+  {% if batch.status == 'unblinded' %}
+    <p>该批次已于 {{ batch.unblinded_at }} 揭盲，不能重复揭盲。</p>
+    <p><a href="{{ url_for('main.unblinding_events', batch_id=batch.id) }}">查看揭盲记录</a></p>
+  {% else %}
+  <form method="post">
+    <label>操作者一</label>
+    <input type="text" name="operator1" required>
+    <label>操作者二（须与操作者一不同）</label>
+    <input type="text" name="operator2" required>
+    <label>揭盲理由（不少于 10 个字符）</label>
+    <textarea name="reason" required></textarea>
+    <p><button class="btn danger" type="submit">确认揭盲</button>
+       <a class="btn secondary" href="{{ url_for('main.batch_detail', batch_id=batch.id) }}">取消</a></p>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
